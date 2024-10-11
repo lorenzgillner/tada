@@ -29,7 +29,7 @@ public:
     const T &d() const;
 
     Derivable &operator=(const T &u);
-    Derivable &operator=(const Derivable &u); // TODO casts between `Derivable`s of different types
+    Derivable &operator=(const Derivable &u); // TODO casts between `Derivable`s of different types?
     template <typename S> Derivable &operator=(const S &u);
 
     Derivable &operator+=(const T &u);
@@ -50,19 +50,23 @@ private:
 
 /** Constructor for `Derivable`s from singletons */
 template <typename T>
-Derivable<T>::Derivable(const T &v) : value(v), deriv(static_cast<T>(CONSTANT)) {}
+Derivable<T>::Derivable(const T &v):
+value(v), deriv(static_cast<T>(CONSTANT)) {}
 
 /** Constructor for `Derivable`s with specifier */
 template <typename T>
-Derivable<T>::Derivable(const T &v, const T &d) : value(v), deriv(d) {} // TODO handle impossible specifiers
+Derivable<T>::Derivable(const T &v, const T &d):
+value(v), deriv(d) {} // TODO handle impossible specifiers
 
 /** Constructor for `Derivable`s from singletons of a different type */
 template <typename T> template <typename S>
-Derivable<T>::Derivable(const S &v) : value(static_cast<T>(v)), deriv(static_cast<T>(CONSTANT)) {}
+Derivable<T>::Derivable(const S &v):
+value(static_cast<T>(v)), deriv(static_cast<T>(CONSTANT)) {}
 
 /** Constructor for `Derivable`s with specifier and different types */
 template <typename T> template <typename S, typename U>
-Derivable<T>::Derivable(const S &v, const U &d) : value(static_cast<T>(v)), deriv(static_cast<T>(d)) {} // TODO handle impossible specifiers
+Derivable<T>::Derivable(const S &v, const U &d):
+value(static_cast<T>(v)), deriv(static_cast<T>(d)) {} // TODO handle impossible specifiers
 
 /** Access to the current value */
 template <typename T>
