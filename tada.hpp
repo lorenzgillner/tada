@@ -96,6 +96,7 @@ Derivable<T> &Derivable<T>::operator=(const S &u)
     return *this;
 }
 
+/** Overloaded compound assignment sum */
 template <typename T>
 Derivable<T> &Derivable<T>::operator+=(const Derivable<T> &u)
 {
@@ -104,6 +105,16 @@ Derivable<T> &Derivable<T>::operator+=(const Derivable<T> &u)
     return *this;
 }
 
+/** Overloaded compound assignment sum for singletons */
+template <typename T>
+Derivable<T> &Derivable<T>::operator+=(const T &u)
+{
+    value += u;
+    deriv += static_cast<T>(CONSTANT);
+    return *this;
+}
+
+/** Overloaded compound assignment difference */
 template <typename T>
 Derivable<T> &Derivable<T>::operator-=(const Derivable<T> &u)
 {
@@ -112,6 +123,16 @@ Derivable<T> &Derivable<T>::operator-=(const Derivable<T> &u)
     return *this;
 }
 
+/** Overloaded compound assignment difference for singletons*/
+template <typename T>
+Derivable<T> &Derivable<T>::operator-=(const T &u)
+{
+    value -= u;
+    deriv -= static_cast<T>(CONSTANT);
+    return *this;
+}
+
+/** Overloaded compound assignment product */
 template <typename T>
 Derivable<T> &Derivable<T>::operator*=(const Derivable<T> &u)
 {
@@ -120,30 +141,50 @@ Derivable<T> &Derivable<T>::operator*=(const Derivable<T> &u)
     return *this;
 }
 
+/** Overloaded compound assignment product for singletons */
+template <typename T>
+Derivable<T> &Derivable<T>::operator*=(const T &u)
+{
+    deriv = value * static_cast<T>(CONSTANT) + deriv * u;
+    value *= u;
+    return *this;
+}
+
+/** Overloaded compound assignment division */
 template <typename T>
 Derivable<T> &Derivable<T>::operator/=(const Derivable<T> &u)
 {
-    // TODO catch v.x() = 0
+    // TODO catch u.x() == 0
     T vdu = value / u.v();
     deriv = (deriv - (vdu * u.d())) / u.v();
     value = udv;
     return *this;
 }
 
-// TODO plus and minus sign
+/** Overloaded compound assignment division for singletons */
+template <typename T>
+Derivable<T> &Derivable<T>::operator/=(const T &u)
+{
+    // TODO catch u == 0
+    T vdu = value / u;
+    deriv = (deriv - (vdu * static_cast<T>(CONSTANT))) / u;
+    value = udv;
+    return *this;
+}
+
+/** Overloaded plus operator */
 template <typename T>
 Derivable<T> &operator+(const Derivable<T> &x)
 {
     return x;
 }
 
+/** Overloaded minus operator */
 template <typename T>
-Derivable<T> operator-(const Derivable &x)
+Derivable<T> operator-(const Derivable<T> &x)
 {
-    return Derivable<T>(-x.v(), x.d());
+    return Derivable<T>(-x.v(), -x.d()); // XXX is this valid?
 }
-
-// TODO operator overloading for singletons
 
 // template <typename T, typename S>
 // Derivable<T> operator+(const Derivable<T> &u, const S &v)
