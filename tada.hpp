@@ -13,7 +13,7 @@
 
 namespace tada {
 
- // XXX use template paramter for distinction/specifier instead of constructor argument?
+// XXX use template paramter for distinction/specifier instead of constructor argument?
 template <typename T>
 class Derivable
 {
@@ -131,6 +131,18 @@ Derivable<T> &Derivable<T>::operator/=(const Derivable<T> &u)
 }
 
 // TODO plus and minus sign
+template <typename T>
+Derivable<T> &operator+(const Derivable<T> &x)
+{
+    return x;
+}
+
+template <typename T>
+Derivable<T> operator-(const Derivable &x)
+{
+    return Derivable<T>(-x.v(), x.d());
+}
+
 // TODO operator overloading for singletons
 
 // template <typename T, typename S>
