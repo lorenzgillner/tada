@@ -2,20 +2,20 @@
 #define TADA_HPP
 
 #ifdef __NVCC__
-#define PORTABLE __host__ __device__
-#else
-#define PORTABLE
-#endif
+#include <cuda/std/cmath>
+#include <cuda/std/utility>
 
-#define VARIABLE 1
-#define CONSTANT 0
-#define INDEPEND 1
+#define __portable__ __host__ __device__
+
+using namespace cuda;
+#else
+#define __portable__
+#endif
 
 namespace tada {
 
 enum specifier { constant, independent };
 
-// XXX use template paramter for distinction/specifier instead of constructor argument?
 template <typename T>
 class Derivable
 {
@@ -46,12 +46,10 @@ private:
     T deriv;
 };
 
-// TODO variable and constant "shortcuts"
-
 /** Constructor for `Derivable`s from singletons */
 template <typename T>
 Derivable<T>::Derivable(const T &v):
-value(v), deriv(static_cast<T>(CONSTANT)) {}
+value(v), deriv(static_cast<T>(constant)) {}
 
 /** Constructor for `Derivable`s with specifier */
 template <typename T>
@@ -61,7 +59,7 @@ value(v), deriv(d) {} // TODO handle impossible specifiers
 /** Constructor for `Derivable`s from singletons of a different type */
 template <typename T> template <typename S>
 Derivable<T>::Derivable(const S &v):
-value(static_cast<T>(v)), deriv(static_cast<T>(CONSTANT)) {}
+value(static_cast<T>(v)), deriv(static_cast<T>(constant)) {}
 
 /** Constructor for `Derivable`s with specifier and different types */
 template <typename T> template <typename S, typename U>
@@ -87,7 +85,7 @@ template <typename T>
 Derivable<T> &Derivable<T>::operator=(const T &u)
 {
     value = u;
-    deriv = static_cast<T>(CONSTANT);
+    deriv = static_cast<T>(constant);
     return *this;
 }
 
@@ -105,7 +103,7 @@ template <typename T> template <typename S>
 Derivable<T> &Derivable<T>::operator=(const S &u)
 {
     value = static_cast<T>(u);
-    deriv = static_cast<T>(CONSTANT);
+    deriv = static_cast<T>(constant);
     return *this;
 }
 
@@ -123,7 +121,7 @@ template <typename T>
 Derivable<T> &Derivable<T>::operator+=(const T &u)
 {
     value += u;
-    deriv += static_cast<T>(CONSTANT);
+    deriv += static_cast<T>(constant);
     return *this;
 }
 
@@ -141,7 +139,7 @@ template <typename T>
 Derivable<T> &Derivable<T>::operator-=(const T &u)
 {
     value -= u;
-    deriv -= static_cast<T>(CONSTANT);
+    deriv -= static_cast<T>(constant);
     return *this;
 }
 
@@ -158,7 +156,7 @@ Derivable<T> &Derivable<T>::operator*=(const Derivable<T> &u)
 template <typename T>
 Derivable<T> &Derivable<T>::operator*=(const T &u)
 {
-    deriv = value * static_cast<T>(CONSTANT) + deriv * u;
+    deriv = value * static_cast<T>(constant) + deriv * u;
     value *= u;
     return *this;
 }
@@ -180,12 +178,12 @@ Derivable<T> &Derivable<T>::operator/=(const T &u)
 {
     // TODO catch u == 0
     T vdu = value / u;
-    deriv = (deriv - (vdu * static_cast<T>(CONSTANT))) / u;
+    deriv = (deriv - (vdu * static_cast<T>(constant))) / u;
     value = vdu;
     return *this;
 }
 
-/** Overloaded addition operator */
+/** Overloaded addition operator */__portable__
 template <typename T>
 Derivable<T> &operator+(const Derivable<T> &x)
 {
@@ -195,7 +193,7 @@ Derivable<T> &operator+(const Derivable<T> &x)
 template <typename T>
 Derivable<T> operator+(const Derivable<T> &x, const T &y)
 {
-    return Derivable<T>(x.v() + y, x.d() + static_cast<T>(CONSTANT));
+    return Derivable<T>(x.v() + y, x.d() + static_cast<T>(constant));
 }
 
 template <typename T>
@@ -207,7 +205,7 @@ Derivable<T> operator+(const Derivable<T> &x, const Derivable<T> &y)
 template <typename T, typename S>
 Derivable<T> operator+(const Derivable<T> &x, const S &y)
 {
-    return Derivable<T>(x.v() + static_cast<T>(y), x.d() + static_cast<T>(CONSTANT));
+    return Derivable<T>(x.v() + static_cast<T>(y), x.d() + static_cast<T>(constant));
 }
 
 template <typename T, typename S>
@@ -226,7 +224,7 @@ Derivable<T> operator-(const Derivable<T> &x)
 template <typename T>
 Derivable<T> operator-(const Derivable<T> &x, const T &y)
 {
-    return Derivable<T>(x.v() - y, x.d() - static_cast<T>(CONSTANT));
+    return Derivable<T>(x.v() - y, x.d() - static_cast<T>(constant));
 }
 
 template <typename T>
@@ -238,20 +236,20 @@ Derivable<T> operator-(const Derivable<T> &x, const Derivable<T> &y)
 template <typename T, typename S>
 Derivable<T> operator-(const Derivable<T> &x, const S &y)
 {
-    return Derivable<T>(x.v() - static_cast<T>(y), x.d() - static_cast<T>(CONSTANT));
+    return Derivable<T>(x.v() - static_cast<T>(y), x.d() - static_cast<T>(constant));
 }
 
 template <typename T, typename S>
 Derivable<T> operator-(const S &x, const Derivable<T> &y)
 {
-    return Derivable<T>(static_cast<T>(x) - y.v(), static_cast<T>(CONSTANT) - y.d());
+    return Derivable<T>(static_cast<T>(x) - y.v(), static_cast<T>(constant) - y.d());
 }
 
 /** Overloaded multiplication operator */
 template <typename T>
 Derivable<T> operator*(const Derivable<T> &x, const T &y)
 {
-    return Derivable<T>(x.v() * y, x.v() * static_cast<T>(CONSTANT) + x.d() * y);
+    return Derivable<T>(x.v() * y, x.v() * static_cast<T>(constant) + x.d() * y);
 }
 
 template <typename T>
@@ -263,13 +261,13 @@ Derivable<T> operator*(const Derivable<T> &x, const Derivable<T> &y)
 template <typename T, typename S>
 Derivable<T> operator*(const Derivable<T> &x, const S &y)
 {
-    return Derivable<T>(x.v() * static_cast<T>(y), x.v() * static_cast<T>(CONSTANT) + x.d() * static_cast<T>(y));
+    return Derivable<T>(x.v() * static_cast<T>(y), x.v() * static_cast<T>(constant) + x.d() * static_cast<T>(y));
 }
 
 template <typename T, typename S>
 Derivable<T> operator*(const S &x, const Derivable<T> &y)
 {
-    return Derivable<T>(static_cast<T>(x) * y.v(), static_cast<T>(x) * y.d() + static_cast<T>(CONSTANT) * y.v());
+    return Derivable<T>(static_cast<T>(x) * y.v(), static_cast<T>(x) * y.d() + static_cast<T>(constant) * y.v());
 }
 
 /** Overloaded division operator */
@@ -277,7 +275,7 @@ template <typename T>
 Derivable<T> operator/(const Derivable<T> &x, const T &y)
 {
     T xdy = x.v() / y;
-    return Derivable<T>(xdy, (x.d() - (xdy * static_cast<T>(CONSTANT))) / y);
+    return Derivable<T>(xdy, (x.d() - (xdy * static_cast<T>(constant))) / y);
 }
 
 template <typename T>
@@ -292,7 +290,7 @@ Derivable<T> operator/(const Derivable<T> &x, const S &y)
 {
     T _y = static_cast<T>(y);
     T xdy = x.v() / _y;
-    return Derivable<T>(xdy, (x.d() - (xdy * static_cast<T>(CONSTANT))) / _y);
+    return Derivable<T>(xdy, (x.d() - (xdy * static_cast<T>(constant))) / _y);
 }
 
 template <typename T, typename S>
@@ -300,7 +298,7 @@ Derivable<T> operator/(const S &x, const Derivable<T> &y)
 {
     T _x = static_cast<T>(x);
     T xdy = _x / y.v();
-    return Derivable<T>(xdy, (static_cast<T>(CONSTANT) - (xdy * y.d())) / y.v());
+    return Derivable<T>(xdy, (static_cast<T>(constant) - (xdy * y.d())) / y.v());
 }
 
 template <typename T> T square(const T &x);
