@@ -2,13 +2,15 @@
 #define TADA_HPP
 
 #ifdef __NVCC__
+#include <cuda/std/array>
 #include <cuda/std/cmath>
 #include <cuda/std/utility>
-
 #define __portable__ __host__ __device__
-
 using namespace cuda;
 #else
+#include <array>
+#include <cmath>
+#include <utility>
 #define __portable__
 #endif
 
@@ -322,6 +324,8 @@ __portable__ template <> double square(const double &x) {
   return ::std::pow(x, 2);
 }
 
+__portable__ template <typename T> T sqr(const T &x) { return square(x); }
+
 __portable__ template <typename T> Derivable<T> square(const Derivable<T> &x) {
   return Derivable<T>(square(x.v()), x.d() * 2 * x.v());
 }
@@ -362,10 +366,23 @@ __portable__ template <typename T> Derivable<T> log(const Derivable<T> &x) {
   return Derivable<T>(log(x.v()), x.d() / x.v());
 }
 
-/** Wrapper for calculating the derivative of a univariate function $f$ */
-__portable__ template <typename T>
-T derivative(Derivable<T> (*f)(Derivable<T>), const Derivable<T> &x) {
-  return f(x.derive()).d();
+/** Wrapper for calculating the derivative of a univariate function */
+__portable__ template <typename Function, typename T>
+Derivable<T> derivative(Function f, const Derivable<T> &x) {
+  return f(x.derive());
+}
+
+/** Wrapper for calculating partial derivatives of a multivariate function */
+__portable__ template <typename Function, typename T, size_t N>
+::std::array<Derivable<T>, N> gradient(Function f,
+                                       const ::std::array<Derivable<T>, N> xs) {
+  ::std::array<Derivable<T>, N> rv = xs;
+  for (auto n = 0; n < N; n++) {
+    auto cv = xs;
+    cv[n] = cv[n].derive();
+    rv[n] = f(cv);
+  }
+  return rv;
 }
 
 } // namespace tada
