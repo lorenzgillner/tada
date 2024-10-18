@@ -1,6 +1,8 @@
 #ifndef TADA_HPP
 #define TADA_HPP
 
+#define EXPERIMENTAL
+
 #ifdef __NVCC__
 #include <cuda/std/array>
 #include <cuda/std/cmath>
@@ -11,6 +13,9 @@ using namespace cuda;
 #include <array>
 #include <cmath>
 #include <utility>
+#ifdef EXPERIMENTAL
+#include <tuple>
+#endif
 #define __portable__
 #endif
 
@@ -383,6 +388,21 @@ __portable__ template <typename Function, typename T, size_t N>
     rv[n] = f(cv);
   }
   return rv;
+}
+
+// EXPERIMENTAL
+template <typename Function, typename Tuple, size_t... N>
+auto gradient_impl(Function f, Tuple args, std::index_sequence<N...>) {
+  return std::make_tuple([&] {
+    auto cargs = args;
+    std::get<N>(cargs) = std::get<N>(args).derive();
+    return std::apply(f, cargs);
+  }()...);
+}
+
+template <typename Function, typename... Ts>
+auto gradient(Function f, Ts... args) {
+  return gradient_impl(f, std::make_tuple(args...), std::make_index_sequence<sizeof...(Ts)>{});
 }
 
 } // namespace tada
