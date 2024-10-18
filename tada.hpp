@@ -390,7 +390,7 @@ __portable__ template <typename Function, typename T, size_t N>
   return rv;
 }
 
-// EXPERIMENTAL
+#ifdef EXPERIMENTAL
 template <typename Function, typename Tuple, size_t... N>
 auto gradient_impl(Function f, Tuple args, std::index_sequence<N...>) {
   return std::make_tuple([&] {
@@ -404,6 +404,7 @@ template <typename Function, typename... Ts>
 auto gradient(Function f, Ts... args) {
   return gradient_impl(f, std::make_tuple(args...), std::make_index_sequence<sizeof...(Ts)>{});
 }
+#endif
 
 } // namespace tada
 

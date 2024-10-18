@@ -1,13 +1,10 @@
 #define BOOST_TEST_MODULE arithmetic
-#include "../tada.hpp"
-#include "boost/test/included/unit_test.hpp"
+#include "config.hpp"
 
 using namespace tada;
 
-typedef double itype;
-typedef Derivable<itype> dtype;
-
-BOOST_AUTO_TEST_CASE(test_add) {
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_add, T, test_types) {
+  using dtype = Derivable<T>;
   auto f = [](dtype x) { return x + 2; };
 
   dtype x(2);
@@ -17,7 +14,8 @@ BOOST_AUTO_TEST_CASE(test_add) {
   BOOST_TEST(fx.d() == 1.0);
 }
 
-BOOST_AUTO_TEST_CASE(test_sub) {
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_sub, T, test_types) {
+  using dtype = Derivable<T>;
   auto f = [](dtype x) { return x - 2; };
 
   dtype x(2);
@@ -27,7 +25,8 @@ BOOST_AUTO_TEST_CASE(test_sub) {
   BOOST_TEST(fx.d() == 1.0);
 }
 
-BOOST_AUTO_TEST_CASE(test_mul) {
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_mul, T, test_types) {
+  using dtype = Derivable<T>;
   auto f = [](dtype x) { return x * 2; };
 
   dtype x(2);
@@ -37,7 +36,8 @@ BOOST_AUTO_TEST_CASE(test_mul) {
   BOOST_TEST(fx.d() == 2.0);
 }
 
-BOOST_AUTO_TEST_CASE(test_div) {
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_div, T, test_types) {
+  using dtype = Derivable<T>;
   auto f = [](dtype x) { return x / 2; };
 
   dtype x(2);
