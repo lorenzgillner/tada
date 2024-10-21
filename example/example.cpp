@@ -37,17 +37,18 @@ int main() {
   dtype expx = f_exp(x);
   dtype logx = f_log(x);
 
-  std::cout << "x + 2," << addx.v() << "," << addx.d() << "\n";
-  std::cout << "x - 2," << subx.v() << "," << subx.d() << "\n";
-  std::cout << "x * 2," << mulx.v() << "," << mulx.d() << "\n";
-  std::cout << "x / 2," << divx.v() << "," << divx.d() << "\n";
-  std::cout << "square(x)," << squarex.v() << "," << squarex.d() << "\n";
-  std::cout << "pow(x,2)," << pow2x.v() << "," << pow2x.d() << "\n";
-  std::cout << "pow(x,3)," << pow3x.v() << "," << pow3x.d() << "\n";
-  std::cout << "sqrt(x)," << sqrtx.v() << "," << sqrtx.d() << "\n";
-  std::cout << "sin(x)," << sinx.v() << "," << sinx.d() << "\n";
-  std::cout << "cos(x)," << cosx.v() << "," << cosx.d() << "\n";
-  std::cout << "exp(x)," << expx.v() << "," << expx.d() << "\n";
-  std::cout << "log(x)," << logx.v() << "," << logx.d() << "\n";
+  std::cout << "f;f(x);f'(x)\n";
+  std::cout << "x + 2;" << addx.v() << ";" << addx.d() << "\n";
+  std::cout << "x - 2;" << subx.v() << ";" << subx.d() << "\n";
+  std::cout << "x * 2;" << mulx.v() << ";" << mulx.d() << "\n";
+  std::cout << "x / 2;" << divx.v() << ";" << divx.d() << "\n";
+  std::cout << "square(x);" << squarex.v() << ";" << squarex.d() << "\n";
+  std::cout << "pow(x,2);" << pow2x.v() << ";" << pow2x.d() << "\n";
+  std::cout << "pow(x,3);" << pow3x.v() << ";" << pow3x.d() << "\n";
+  std::cout << "sqrt(x);" << sqrtx.v() << ";" << sqrtx.d() << "\n";
+  std::cout << "sin(x);" << sinx.v() << ";" << sinx.d() << "\n";
+  std::cout << "cos(x);" << cosx.v() << ";" << cosx.d() << "\n";
+  std::cout << "exp(x);" << expx.v() << ";" << expx.d() << "\n";
+  std::cout << "log(x);" << logx.v() << ";" << logx.d() << "\n";
   std::cout << "x = " << x.v() << std::endl;
 }

@@ -6,11 +6,21 @@ enable_testing()
 
 set(TEST_DIR "${CMAKE_SOURCE_DIR}/tests")
 
+enable_language(CUDA)
+set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+set(CMAKE_CUDA_ARCHITECTURES 75)
+
 find_package(Boost 1.70 REQUIRED COMPONENTS unit_test_framework)
+# find_package(CUDA REQUIRED)
+
 #set(CMAKE_CXX_STANDARD 11)
 
 add_executable(example example/example.cpp)
 target_include_directories(example PRIVATE ${CMAKE_SOURCE_DIR})
+
+add_executable(cuda_example example/example.cu )
+target_include_directories(cuda_example PRIVATE ${CMAKE_SOURCE_DIR})
 
 macro(setup_test target)
     add_executable(${target} ${TEST_DIR}/${target}.cpp)
