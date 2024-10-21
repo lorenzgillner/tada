@@ -343,7 +343,7 @@ template <> __portable__ double square(const double &x) {
 template <typename T> __portable__ T sqr(const T &x) { return square(x); }
 
 template <typename T> __portable__ Derivable<T> square(const Derivable<T> &x) {
-  return Derivable<T>(square(x.v()), x.d() * 2 * x.v());
+  return Derivable<T>(square(x.v()), x.d() * static_cast<T>(2) * x.v());
 }
 
 template <typename T>
@@ -356,7 +356,7 @@ __portable__ Derivable<T> pow(const Derivable<T> &x, const T &p) {
 template <typename T> __portable__ Derivable<T> sqrt(const Derivable<T> &x) {
   using _std::sqrt;
   T sqrtx = sqrt(x.v());
-  return Derivable<T>(sqrtx, x.d() / (2 * sqrtx));
+  return Derivable<T>(sqrtx, x.d() / (static_cast<T>(2) * sqrtx));
 }
 
 template <typename T> __portable__ Derivable<T> sin(const Derivable<T> &x) {

@@ -10,8 +10,9 @@ enable_language(CUDA)
 set(CMAKE_CUDA_STANDARD 17)
 set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 set(CMAKE_CUDA_ARCHITECTURES 75)
+set(CMAKE_CUDA_FLAGS --expt-relaxed-constexpr)
 
-find_package(Boost 1.70 REQUIRED COMPONENTS unit_test_framework)
+find_package(Boost 1.82 REQUIRED COMPONENTS unit_test_framework)
 # find_package(CUDA REQUIRED)
 
 #set(CMAKE_CXX_STANDARD 11)
