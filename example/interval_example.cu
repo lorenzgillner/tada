@@ -21,39 +21,40 @@ typedef interval<itype, policies<save_state_nothing<rounded_transc_exact<itype>>
                                  checking_base<itype>>>
     xinterval;
 typedef Derivable<xinterval> dtype;
+typedef cuda::std::array<dtype, 2> boxtype;
 
-__device__ dtype f(dtype x, dtype y)
+__device__ dtype f(boxtype x)
 {
-    return ((sqr(x) / 4000) + (sqr(y) / 4000)) - (cos(x) * cos(y / sqrt(2))) + 1;
+    return ((sqr(x[0]) / 4000) + (sqr(x[1]) / 4000)) - (cos(x[0]) * cos(x[1] / sqrt(2))) + 1;
 }
 
-__global__ void kernel(dtype *A)
+__global__ void kernel(boxtype *A)
 {
     int i = threadIdx.x;
 
-    dtype x(xinterval(1,2), independent);
+    dtype x(xinterval(1,2));
     dtype y(xinterval(2,3));
 
-    dtype fx = f(x, y);
+    boxtype _A = {x, y};
 
-    A[i] = fx;
+    A[i] = gradient(f, _A);
 }
 
 int main()
 {
     int N = 10;
 
-    newHostData(h_A, dtype, N);
-    newDeviceData(d_A, dtype, N);
+    newHostData(h_A, boxtype, N);
+    newDeviceData(d_A, boxtype, N);
     
-    cudaMemcpy(d_A, h_A, sizeof(dtype) * N, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_A, h_A, sizeof(boxtype) * N, cudaMemcpyHostToDevice);
 
     kernel<<<1, N>>>(d_A);
     cudaDeviceSynchronize();
 
-    cudaMemcpy(h_A, d_A, sizeof(dtype) * N, cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_A, d_A, sizeof(boxtype) * N, cudaMemcpyDeviceToHost);
 
-    for (int i(0); i < N; i++) std::cout << h_A[i].v() << "\t" << h_A[i].d() << std::endl;
+    for (int i(0); i < N; i++) std::cout << h_A[i][0].v() << "\t" << h_A[i][0].d() << "\t" << h_A[i][1].d() << std::endl;
 
     cudaFree(d_A);
     free(h_A);

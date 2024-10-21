@@ -390,7 +390,7 @@ __portable__ Derivable<T> derivative(Function f, const Derivable<T> &x) {
 
 /** Wrapper for calculating partial derivatives of a multivariate function */
 template <typename Function, typename T, size_t N>
-_std::array<Derivable<T>, N> gradient(Function f,
+__portable__ _std::array<Derivable<T>, N> gradient(Function f,
                                       const _std::array<Derivable<T>, N> xs) {
   _std::array<Derivable<T>, N> rv = xs;
   for (auto n = 0; n < N; n++) {
