@@ -14,6 +14,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_derive, T, test_types) {
 
   BOOST_TEST(dfdx.v() == 4.0);
   BOOST_TEST(dfdx.d() == 2.0);
+  BOOST_TEST(dfdx.dd() == 0.0);
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_gradient, T, test_types) {
@@ -31,6 +32,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_gradient, T, test_types) {
 
   BOOST_TEST(df[0].v() == 4.0);
   BOOST_TEST(df[0].d() == -1.0);
+  BOOST_TEST(df[0].dd() == 0.0);
   BOOST_TEST(df[1].v() == 4.0);
   BOOST_TEST(df[1].d() == 0.0);
+  BOOST_TEST(df[1].dd() == 0.0);
 }

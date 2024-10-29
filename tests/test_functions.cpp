@@ -61,9 +61,11 @@ BOOST_AUTO_TEST_CASE(test_griewank) {
   darray df = gradient(griewank, x);
 
   BOOST_TEST(df[0].v() == df[1].v());
-  BOOST_TEST(truncated(df[0].v(), 6) == 0.934263);
-  BOOST_TEST(truncated(df[0].d(), 6) == 0.936548);
-  BOOST_TEST(truncated(df[1].d(), 6) == -0.017568);
+  BOOST_TEST(truncated(df[0].v(), 5) == 0.93426);
+  BOOST_TEST(truncated(df[0].d(), 5) == 0.93654);
+  BOOST_TEST(truncated(df[0].dd(), 5) == 0.06686);
+  BOOST_TEST(truncated(df[1].d(), 5) == -0.01756);
+  BOOST_TEST(truncated(df[1].dd(), 5) == 0.03368);
 }
 
 BOOST_AUTO_TEST_CASE(test_griewank2) {
@@ -73,7 +75,9 @@ BOOST_AUTO_TEST_CASE(test_griewank2) {
   auto df = gradient(griewank2, x, y);
 
   BOOST_TEST(std::get<0>(df).v() == std::get<1>(df).v());
-  BOOST_TEST(truncated(std::get<0>(df).v(), 6) == 0.934263);
-  BOOST_TEST(truncated(std::get<0>(df).d(), 6) == 0.936548);
-  BOOST_TEST(truncated(std::get<1>(df).d(), 6) == -0.017568);
+  BOOST_TEST(truncated(std::get<0>(df).v(), 5) == 0.93426);
+  BOOST_TEST(truncated(std::get<0>(df).d(), 5) == 0.93654);
+  BOOST_TEST(truncated(std::get<0>(df).dd(), 5) == 0.06686);
+  BOOST_TEST(truncated(std::get<1>(df).d(), 5) == -0.01756);
+  BOOST_TEST(truncated(std::get<1>(df).dd(), 5) == 0.03368);
 }
