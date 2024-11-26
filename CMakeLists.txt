@@ -1,34 +1,36 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.17)
 
-project(tada)
-
-enable_testing()
-
-set(TEST_DIR "${CMAKE_SOURCE_DIR}/tests")
-
-enable_language(CUDA)
-set(CMAKE_CUDA_STANDARD 17)
-set(CMAKE_CUDA_STANDARD_REQUIRED ON)
-set(CMAKE_CUDA_ARCHITECTURES 75)
-set(CMAKE_CUDA_FLAGS --expt-relaxed-constexpr)
+project(tada LANGUAGES CXX)
 
 find_package(Boost 1.82 REQUIRED COMPONENTS unit_test_framework)
-# find_package(CUDA REQUIRED)
 
-#set(CMAKE_CXX_STANDARD 11)
+enable_testing()
+set(TEST_DIR "${CMAKE_SOURCE_DIR}/tests")
 
-add_executable(example example/example.cpp)
-target_include_directories(example PRIVATE ${CMAKE_SOURCE_DIR})
+set(EXAMPLE_DIR "${CMAKE_SOURCE_DIR}/examples")
 
-add_executable(cuda_example example/example.cu )
-target_include_directories(cuda_example PRIVATE ${CMAKE_SOURCE_DIR})
+include_directories("${CMAKE_SOURCE_DIR}/include")
 
-add_executable(cuda_interval_example example/interval_example.cu )
-target_include_directories(cuda_interval_example PRIVATE ${CMAKE_SOURCE_DIR} ${CUSTOM_BOOST_LIB})
+option(USE_CUDA "Enable CUDA support" OFF)
+
+if(USE_CUDA)
+    message(STATUS "CUDA support enabled")
+    enable_language(CUDA)
+    set(CMAKE_CUDA_STANDARD 17)
+    set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+    set(CMAKE_CUDA_ARCHITECTURES 75)
+    set(CMAKE_CUDA_FLAGS --expt-relaxed-constexpr)
+
+    add_executable(cuda_example example/example.cu)
+
+    add_executable(cuda_interval_example example/interval_example.cu)
+    target_include_directories(cuda_interval_example PRIVATE ${CUSTOM_BOOST_LIB})
+endif()
+
+add_executable(example ${EXAMPLE_DIR}/example.cpp)
 
 macro(setup_test target)
     add_executable(${target} ${TEST_DIR}/${target}.cpp)
-    # set_property(TARGET ${target} PROPERTY CXX_STANDARD 11)
     target_link_libraries(${target} PRIVATE Boost::unit_test_framework)
     add_test(NAME ${target} COMMAND ${target})
 endmacro()

@@ -1,5 +1,5 @@
 #define BOOST_TEST_MODULE functions
-#include "../tada.hpp"
+#include "tada.hpp"
 #include <boost/test/included/unit_test.hpp>
 
 using namespace tada;
