@@ -21,9 +21,9 @@ if(USE_CUDA)
     set(CMAKE_CUDA_ARCHITECTURES 75)
     set(CMAKE_CUDA_FLAGS --expt-relaxed-constexpr)
 
-    add_executable(cuda_example example/example.cu)
+    add_executable(cuda_example ${EXAMPLE_DIR}/example.cu)
 
-    add_executable(cuda_interval_example example/interval_example.cu)
+    add_executable(cuda_interval_example ${EXAMPLE_DIR}/interval_example.cu)
     target_include_directories(cuda_interval_example PRIVATE ${CUSTOM_BOOST_LIB})
 endif()
 
