@@ -21,7 +21,7 @@
 #define TADA_HPP
 
 #ifndef __CUDACC__
-#define EXPERIMENTAL
+#define TADA_ENABLE_EXPERIMENTAL
 #endif
 
 #ifdef __NVCC__
@@ -34,7 +34,7 @@
 #include <array>
 #include <cmath>
 #include <utility>
-#ifdef EXPERIMENTAL
+#ifdef TADA_ENABLE_EXPERIMENTAL
 #include <tuple>
 #endif
 #define __portable__
@@ -54,6 +54,7 @@ private:
 #endif
 
 public:
+  __portable__ Derivable();
   __portable__ Derivable(const T &v);
   __portable__ Derivable(const T &v, const T &d);
 #ifndef TADA_FIRST_ORDER_ONLY
@@ -86,6 +87,17 @@ public:
   __portable__ Derivable &operator/=(const T &u);
   __portable__ Derivable &operator/=(const Derivable &u);
 };
+
+/** Default constructor */
+template <typename T>
+__portable__ Derivable<T>::Derivable()
+    : value(static_cast<T>(0)), deriv(static_cast<T>(constant))
+#ifndef TADA_FIRST_ORDER_ONLY
+      ,
+      dderiv(static_cast<T>(constant))
+#endif
+{
+}
 
 /** Constructor for `Derivable`s from singletons */
 template <typename T>
@@ -641,7 +653,7 @@ gradient(Function f, const _std::array<Derivable<T>, N> xs) {
   return rv;
 }
 
-#ifdef EXPERIMENTAL
+#ifdef TADA_ENABLE_EXPERIMENTAL
 template <typename Function, typename Tuple, size_t... N>
 auto gradient_impl(Function f, Tuple args, std::index_sequence<N...>) {
   return std::make_tuple([&] {
