@@ -590,8 +590,8 @@ namespace tada {
     );
   }
 
-  template<typename T>
-  portable Derivable<T> pow(const Derivable<T> &x, const T &p) {
+  template<typename T, typename S>
+  portable Derivable<T> pow(const Derivable<T> &x, const S &p) {
     // TODO catch p == 0
     using _std::pow;
     T _t = p * pow(x.v(), p - 1);
