@@ -24,7 +24,7 @@
 #define TADA_ENABLE_EXPERIMENTAL
 #endif
 
-#ifdef __NVCC__
+#ifdef __CUDACC__
 #include <cuda/std/array>
 #include <cuda/std/cmath>
 #include <cuda/std/utility>
@@ -39,9 +39,9 @@
 #endif
 #define portable
 #define _std std
-#endif
+#endif // __CUDACC__
 
-//#define TADA_ORDER 1
+#define TADA_ORDER 1
 
 namespace tada {
 template <typename T>
