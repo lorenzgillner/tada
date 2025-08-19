@@ -5,7 +5,7 @@ using namespace tada;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_add, T, test_types) {
   using dtype = Derivable<T>;
-  auto f = [](dtype x) { return x + 2; };
+  auto f = [](const dtype& x) { return x + 2; };
 
   dtype x(2);
   dtype fx = f(x.derive());
@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_add, T, test_types) {
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_sub, T, test_types) {
   using dtype = Derivable<T>;
-  auto f = [](dtype x) { return x - 2; };
+  auto f = [](const dtype& x) { return x - 2; };
 
   dtype x(2);
   dtype fx = f(x.derive());
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_sub, T, test_types) {
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_mul, T, test_types) {
   using dtype = Derivable<T>;
-  auto f = [](dtype x) { return x * 2; };
+  auto f = [](const dtype& x) { return x * 2; };
 
   dtype x(2);
   dtype fx = f(x.derive());
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_mul, T, test_types) {
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_div, T, test_types) {
   using dtype = Derivable<T>;
-  auto f = [](dtype x) { return x / 2; };
+  auto f = [](const dtype& x) { return x / 2; };
 
   dtype x(2);
   dtype fx = f(x.derive());

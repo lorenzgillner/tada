@@ -6,15 +6,15 @@ using namespace tada;
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_derive, T, test_types) {
   using dtype = Derivable<T>;
 
-  dtype x(2);
+  dtype x0(2);
 
-  auto f = [&](dtype x) { return 2 * x; };
+  auto f = [&](const dtype& x) { return 2 * x; };
 
-  dtype dfdx = derivative(f, x);
+  dtype dfdx = derivative(f, x0);
 
-  BOOST_TEST(dfdx.v() == 4.0);
-  BOOST_TEST(dfdx.d() == 2.0);
-  BOOST_TEST(dfdx.dd() == 0.0);
+  BOOST_TEST(dfdx.v() == static_cast<T>(4));
+  BOOST_TEST(dfdx.d() == static_cast<T>(2));
+  BOOST_TEST(dfdx.dd() == static_cast<T>(0));
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_gradient, T, test_types) {
@@ -24,16 +24,16 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_gradient, T, test_types) {
   dtype x0(2);
   dtype x1(3);
 
-  darray x = {x0, x1};
+  darray X = {x0, x1};
 
-  auto g = [&](darray x) { return (2 * x[0]) + (2 * x[1]) - (x[0] * x[1]); };
+  auto g = [&](darray x) { return 2 * x[0] + 2 * x[1] - x[0] * x[1]; };
 
-  darray df = gradient(g, x);
+  darray df = gradient(g, X);
 
-  BOOST_TEST(df[0].v() == 4.0);
-  BOOST_TEST(df[0].d() == -1.0);
-  BOOST_TEST(df[0].dd() == 0.0);
-  BOOST_TEST(df[1].v() == 4.0);
-  BOOST_TEST(df[1].d() == 0.0);
-  BOOST_TEST(df[1].dd() == 0.0);
+  BOOST_TEST(df[0].v() == static_cast<T>(4));
+  BOOST_TEST(df[0].d() == static_cast<T>(-1));
+  BOOST_TEST(df[0].dd() == static_cast<T>(0));
+  BOOST_TEST(df[1].v() == static_cast<T>(4));
+  BOOST_TEST(df[1].d() == static_cast<T>(0));
+  BOOST_TEST(df[1].dd() == static_cast<T>(0));
 }

@@ -11,14 +11,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_default, T, test_types) {
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_explicit, T, test_types) {
-  Derivable<T> x(2, independent);
+  Derivable<T> x(2, 1);
 
   BOOST_TEST(x.v() == static_cast<T>(2));
   BOOST_TEST(x.d() == static_cast<T>(1));
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_Independent, T, test_types) {
-  Derivable<T> x = Independent<T>(2);
+  Derivable<T> x = Ivar<T>(2);
 
   BOOST_TEST(x.v() == static_cast<T>(2));
   BOOST_TEST(x.d() == static_cast<T>(1));

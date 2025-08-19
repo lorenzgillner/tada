@@ -22,7 +22,7 @@ dtype f_exp(dtype x) { return exp(x); }
 dtype f_log(dtype x) { return log(x); }
 
 int main() {
-  dtype x(2, independent);
+  dtype x(2, 1);
 
   dtype addx = f_add(x);
   dtype subx = f_sub(x);
