@@ -20,26 +20,22 @@
 #ifndef TADA_HPP
 #define TADA_HPP
 
-#ifndef __CUDACC__
-#define TADA_ENABLE_EXPERIMENTAL
-#endif
-
 #ifdef __CUDACC__
 #include <cuda/std/array>
 #include <cuda/std/cmath>
 #include <cuda/std/utility>
+#include <cuda/std/tuple>
 #define portable __host__ __device__
 #define _std cuda::std
 #else
 #include <array>
 #include <cmath>
 #include <utility>
-#ifdef TADA_ENABLE_EXPERIMENTAL
 #include <tuple>
-#endif
 #define portable
 #define _std std
 #endif // __CUDACC__
+
 
 #define TADA_ORDER 1
 
@@ -661,13 +657,6 @@ portable Derivable<T> log(const Derivable<T>& x)
     );
 }
 
-/** Wrapper for calculating the derivative of a univariate function */
-template <typename Function, typename T>
-portable Derivable<T> derivative(Function f, const Derivable<T>& x)
-{
-    return f(x.derive());
-}
-
 /** Shortcut for declaring independent variables */
 template <typename T>
 portable Derivable<T> Ivar(const T& x)
@@ -687,7 +676,31 @@ portable Derivable<T> Ivar(const S& x)
     return Derivable<T>(static_cast<T>(x), one<T>());
 }
 
-/** Wrapper for calculating partial derivatives of a multivariate function */
+/** Wrapper for calculating the derivative of a univariate function */
+template <typename Function, typename T>
+portable Derivable<T> derivative(Function f, const Derivable<T>& x)
+{
+    return f(x.derive());
+}
+
+/** Wrapper for calculating gradients */
+template <typename Function, typename Tuple, size_t... N>
+portable auto gradient_impl(Function f, Tuple args, _std::index_sequence<N...>)
+{
+    return _std::make_tuple([&] {
+      auto cargs = args;
+      _std::get<N>(cargs) = _std::get<N>(args).derive();
+      return _std::apply(f, cargs); }()...);
+}
+
+template <typename Function, typename... Ts>
+portable auto gradient(Function f, Ts... args)
+{
+    return gradient_impl(f, _std::make_tuple(args...),
+        _std::make_index_sequence<sizeof...(Ts)> {});
+}
+
+/** Fallback for array-like function parameters */
 template <typename Function, typename T, size_t N>
 portable _std::array<Derivable<T>, N>
 gradient(Function f, const _std::array<Derivable<T>, N> xs)
@@ -700,33 +713,6 @@ gradient(Function f, const _std::array<Derivable<T>, N> xs)
     }
     return rv;
 }
-
-#ifdef TADA_ENABLE_EXPERIMENTAL
-template <typename Function, typename Tuple, size_t... N>
-auto gradient_impl(Function f, Tuple args, std::index_sequence<N...>)
-{
-    return std::make_tuple([&] {
-      auto cargs = args;
-      std::get<N>(cargs) = std::get<N>(args).derive();
-      return std::apply(f, cargs); }()...);
-}
-
-template <typename Function, typename... Ts>
-auto gradient(Function f, Ts... args)
-{
-    return gradient_impl(f, std::make_tuple(args...),
-        std::make_index_sequence<sizeof...(Ts)> {});
-}
-#else
-template <typename Function, typename... Ts>
-auto gradient(Function f, Ts&&... args)
-{
-    return _std::make_tuple([&] {
-      auto cargs = args;
-      _std::get<N>(cargs) = std::get<N>(args).derive();
-      return std::apply(f, cargs); }()...);
-}
-#endif
 } // namespace tada
 
 #endif // TADA_HPP
